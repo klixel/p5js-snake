@@ -71,3 +71,15 @@ function draw() {
 function windowResized() {
     resizeCanvas(windowWidth, windowHeight);
 }
+
+function keyPressed() {
+    if (key === '=' && n < 20) {
+        segments.push(new Segment(segments[n - 1].x, segments[n - 1].y, getWidth(n), 0))
+        n += 1
+    }
+
+    if (key === '-' && n > 5) {
+        segments.pop()
+        n -= 1
+    }
+}
