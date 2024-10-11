@@ -1,6 +1,7 @@
 let speed_modifier = 0.1;
 let n = 15;
 let d = 50;
+let max_angle_change = Math.PI / 6;
 
 class Segment {
     constructor(x, y, d, angle) {
@@ -22,7 +23,7 @@ function getWidth(i) {
     if (i == 0) {
         return 40;
     } else {
-        return max(10, 50 - 5 * i);
+        return max(10, 50 - 3 * i);
     }
 }
 
@@ -52,10 +53,30 @@ function draw() {
         dx = prev.x - s.x;
         dy = prev.y - s.y;
 
-        s.x += dx * speed_modifier;
-        s.y += dy * speed_modifier;
+        let min_distance = prev.d;
+        let distance = dist(prev.x, prev.y, s.x, s.y);
+        if (distance < min_distance) {
+            let angleToPrev = atan2(dy, dx);
+            let targetX = prev.x - cos(angleToPrev) * min_distance;
+            let targetY = prev.y - sin(angleToPrev) * min_distance;
+            s.x += (targetX - s.x) * speed_modifier;
+            s.y += (targetY - s.y) * speed_modifier;
+        } else {
+            s.x += dx * speed_modifier;
+            s.y += dy * speed_modifier;
+        }
 
-        s.angle = atan2(dy, dx);
+        let new_angle = atan2(dy, dx);
+        let angle_difference = new_angle - prev.angle;
+        if (abs(angle_difference) > max_angle_change) {
+            if (angle_difference > 0) {
+                s.angle = prev.angle + max_angle_change;
+            } else {
+                s.angle = prev.angle - max_angle_change;
+            }
+        } else {
+            s.angle = new_angle;
+        }
 
         s.show();
 
